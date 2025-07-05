@@ -202,37 +202,4 @@ cd frontend && npm test
 4. Wait for AI analysis completion
 5. Review generated insights and recommendations
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- **Documentation**: [DEPLOYMENT.md](./DEPLOYMENT.md)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/medscan-ai/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/medscan-ai/discussions)
-
-## 🎯 Roadmap
-
-- [ ] Multi-language support
-- [ ] Mobile app development
-- [ ] Advanced analytics dashboard
-- [ ] Integration with health APIs
-- [ ] Automated report scheduling
-- [ ] Team collaboration features
-
-## ⚠️ Disclaimer
-
-This application is for educational and informational purposes only. It should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always consult with qualified healthcare professionals for medical concerns.
-
----
-
 Made with ❤️ by the Medscan AI Team 
