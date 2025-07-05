@@ -1,0 +1,36 @@
+{
+  "name": "medscan-ai",
+  "version": "1.0.0",
+  "description": "AI-powered blood test analysis platform",
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "deploy": "vercel --prod",
+    "deploy:frontend": "cd frontend && vercel --prod",
+    "deploy:backend": "cd backend && vercel --prod"
+  },
+  "keywords": [
+    "healthcare",
+    "ai",
+    "blood-test",
+    "analysis",
+    "react",
+    "node.js",
+    "mongodb"
+  ],
+  "author": "Medscan AI Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/medscan-ai.git"
+  }
+} 
