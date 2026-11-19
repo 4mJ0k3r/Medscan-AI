@@ -20,7 +20,7 @@ const Header = () => {
 
   // Check for API key on mount
   useEffect(() => {
-    const apiKey = localStorage.getItem('openai_api_key');
+    const apiKey = localStorage.getItem('groq_api_key');
     setHasApiKey(!!apiKey);
   }, []);
 

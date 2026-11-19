@@ -26,7 +26,7 @@ const TestingGuide = () => {
             <div>
               <h3 className="text-xl font-bold text-[#0d141c] mb-2">Beta Testing Phase</h3>
               <p className="text-[#49739c] leading-relaxed">
-                Medscan AI is currently in beta testing. To ensure security and cost control, we require users to provide their own OpenAI API key. 
+                Medscan AI is currently in beta testing. To ensure security and cost control, we require users to provide their own Groq API key. 
                 This allows you to test the system while maintaining control over your API usage and costs.
               </p>
             </div>
@@ -42,17 +42,17 @@ const TestingGuide = () => {
                 1
               </div>
               <div className="flex-1">
-                <h3 className="text-2xl font-bold text-[#0d141c] mb-4">Get Your OpenAI API Key</h3>
+                <h3 className="text-2xl font-bold text-[#0d141c] mb-4">Get Your Groq API Key</h3>
                 <div className="space-y-4">
                   <div className="bg-gray-50 rounded-xl p-6">
                     <h4 className="font-semibold text-[#0d141c] mb-3">Step-by-step:</h4>
                     <ol className="space-y-2 text-[#49739c]">
-                      <li>1. Visit <a href="https://platform.openai.com" target="_blank" rel="noopener noreferrer" className="text-[#248bf3] hover:underline">platform.openai.com</a></li>
+                      <li>1. Visit <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-[#248bf3] hover:underline">console.groq.com</a></li>
                       <li>2. Sign up or log in to your account</li>
                       <li>3. Navigate to "API Keys" section</li>
-                      <li>4. Click "Create new secret key"</li>
-                      <li>5. Copy the generated key (starts with "sk-")</li>
-                      <li>6. Ensure you have billing set up for API access</li>
+                      <li>4. Click "Create API Key"</li>
+                      <li>5. Copy the generated key (starts with "gsk_")</li>
+                      <li>6. No billing required — Groq offers a free tier</li>
                     </ol>
                   </div>
                   <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
@@ -62,7 +62,7 @@ const TestingGuide = () => {
                       </svg>
                       <div>
                         <p className="font-medium text-yellow-800 text-sm">Cost Information</p>
-                        <p className="text-yellow-700 text-sm">Analysis typically costs $0.01-0.05 per report using GPT-4o-mini model.</p>
+                        <p className="text-yellow-700 text-sm">Analysis uses the openai/gpt-oss-120b model on Groq, which is fast and available on the free tier.</p>
                       </div>
                     </div>
                   </div>
@@ -109,7 +109,7 @@ const TestingGuide = () => {
               <div className="flex-1">
                 <h3 className="text-2xl font-bold text-[#0d141c] mb-4">Configure Your API Key</h3>
                 <p className="text-[#49739c] mb-4">
-                  After logging in, you'll be prompted to enter your OpenAI API key. This is stored securely in your browser only.
+                  After logging in, you'll be prompted to enter your Groq API key. This is stored securely in your browser only.
                 </p>
                 <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                   <div className="flex items-start gap-3">

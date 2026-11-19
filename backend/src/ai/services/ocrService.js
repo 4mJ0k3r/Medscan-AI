@@ -1,44 +1,66 @@
-const Tesseract = require('tesseract.js');
+const axios = require('axios');
 const pdf = require('pdf-parse');
 const fs = require('fs');
-const path = require('path');
+
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_VISION_MODEL = 'qwen/qwen3.8-27b';
+
+const OCR_PROMPT = `Transcribe all text from this blood test report image exactly as printed.
+Preserve parameter names, values, units, and reference ranges.
+Output plain text only, one table row per line, with no commentary or markdown.
+If a value is illegible, write [illegible] in its place.`;
 
 class OCRService {
-  constructor() {
-    this.tesseractWorker = null;
-  }
-
-  // Initialize Tesseract worker
-  async initializeTesseract() {
-    if (!this.tesseractWorker) {
-      this.tesseractWorker = await Tesseract.createWorker();
-      await this.tesseractWorker.loadLanguage('eng');
-      await this.tesseractWorker.initialize('eng');
-    }
-    return this.tesseractWorker;
-  }
-
-  // Extract text from image files
-  async extractTextFromImage(imagePath) {
-    try {
-      const worker = await this.initializeTesseract();
-      
-      console.log('Starting OCR processing for image:', imagePath);
-      
-      const { data: { text } } = await worker.recognize(imagePath);
-      
-      console.log('OCR processing completed');
-      
-      return {
-        success: true,
-        text: text.trim(),
-        confidence: 'high' // Tesseract provides confidence but simplified here
-      };
-    } catch (error) {
-      console.error('OCR Error:', error);
+  // Extract text from image files using Groq vision
+  async extractTextFromImage(imagePath, fileType, apiKey) {
+    if (!apiKey) {
       return {
         success: false,
-        error: error.message,
+        error: 'Groq API key is required for image text extraction',
+        text: ''
+      };
+    }
+
+    try {
+      console.log('Starting Groq vision OCR for image:', imagePath);
+
+      const base64Image = fs.readFileSync(imagePath).toString('base64');
+
+      const response = await axios.post(GROQ_API_URL, {
+        model: GROQ_VISION_MODEL,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: OCR_PROMPT },
+              { type: 'image_url', image_url: { url: `data:${fileType};base64,${base64Image}` } }
+            ]
+          }
+        ],
+        temperature: 0,
+        max_completion_tokens: 8000
+      }, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 120000
+      });
+
+      const text = response.data.choices[0].message.content;
+
+      console.log('Groq vision OCR completed');
+
+      return {
+        success: true,
+        text: (text || '').trim(),
+        method: 'groq-vision'
+      };
+    } catch (error) {
+      console.error('Groq vision OCR error:', error.response?.data || error.message);
+      return {
+        success: false,
+        error: error.response?.data?.error?.message || error.message,
         text: ''
       };
     }
@@ -101,10 +123,8 @@ class OCRService {
     };
   }
 
-
-
   // Main method to extract text based on file type
-  async extractText(filePath, fileType) {
+  async extractText(filePath, fileType, groqApiKey) {
     try {
       if (!fs.existsSync(filePath)) {
         throw new Error('File not found');
@@ -124,12 +144,7 @@ class OCRService {
           }
         }
       } else if (fileType.startsWith('image/')) {
-        result = await this.extractTextFromImage(filePath);
-        
-        // If image OCR failed, provide helpful error message
-        if (!result.success) {
-          result.error = 'Image text recognition failed. Please ensure the image is clear and contains readable text.';
-        }
+        result = await this.extractTextFromImage(filePath, fileType, groqApiKey);
       } else {
         throw new Error('Unsupported file type. Please upload PDF, JPG, or PNG files only.');
       }
@@ -160,7 +175,7 @@ class OCRService {
   // Clean and format extracted text
   cleanExtractedText(text) {
     return text
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .replace(/[ \t]+/g, ' ') // Collapse horizontal whitespace, keep line structure
       .replace(/\n+/g, '\n') // Replace multiple newlines with single newline
       .replace(/[^\w\s\n\.\,\:\;\-\(\)\/\%\<\>]/g, '') // Remove special characters but keep common ones
       .trim();
@@ -187,14 +202,6 @@ class OCRService {
       foundKeywords
     };
   }
-
-  // Cleanup method to terminate Tesseract worker
-  async cleanup() {
-    if (this.tesseractWorker) {
-      await this.tesseractWorker.terminate();
-      this.tesseractWorker = null;
-    }
-  }
 }
 
-module.exports = new OCRService(); 
+module.exports = new OCRService();

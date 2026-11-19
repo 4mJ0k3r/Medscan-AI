@@ -12,7 +12,7 @@ const UploadPage = () => {
 
   useEffect(() => {
     // Check if API key exists on component mount
-    const apiKey = localStorage.getItem('openai_api_key');
+    const apiKey = localStorage.getItem('groq_api_key');
     if (!apiKey) {
       setShowApiKeyModal(true);
     } else {

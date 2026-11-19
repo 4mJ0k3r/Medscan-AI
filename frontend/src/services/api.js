@@ -18,7 +18,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to add auth token and OpenAI API key
+// Request interceptor to add auth token and Groq API key
 api.interceptors.request.use(
   (config) => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -26,10 +26,10 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${user.token}`;
     }
     
-    // Add OpenAI API key if available
-    const openaiApiKey = localStorage.getItem('openai_api_key');
-    if (openaiApiKey) {
-      config.headers['X-OpenAI-API-Key'] = openaiApiKey;
+    // Add Groq API key if available
+    const groqApiKey = localStorage.getItem('groq_api_key');
+    if (groqApiKey) {
+      config.headers['X-Groq-API-Key'] = groqApiKey;
     }
     
     return config;

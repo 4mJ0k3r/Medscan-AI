@@ -7,7 +7,7 @@ const ApiKeyManager = ({ onApiKeySet, showModal, onClose }) => {
 
   useEffect(() => {
     // Check if API key exists in localStorage
-    const savedApiKey = localStorage.getItem('openai_api_key');
+    const savedApiKey = localStorage.getItem('groq_api_key');
     if (savedApiKey) {
       setApiKey(savedApiKey);
       onApiKeySet(savedApiKey);
@@ -16,14 +16,14 @@ const ApiKeyManager = ({ onApiKeySet, showModal, onClose }) => {
 
   const handleSaveApiKey = () => {
     if (apiKey.trim()) {
-      localStorage.setItem('openai_api_key', apiKey.trim());
+      localStorage.setItem('groq_api_key', apiKey.trim());
       onApiKeySet(apiKey.trim());
       onClose();
     }
   };
 
   const handleRemoveApiKey = () => {
-    localStorage.removeItem('openai_api_key');
+    localStorage.removeItem('groq_api_key');
     setApiKey('');
     onApiKeySet('');
   };
@@ -68,7 +68,7 @@ const ApiKeyManager = ({ onApiKeySet, showModal, onClose }) => {
               <div>
                 <h3 className="font-semibold text-[#0d141c] mb-2">Testing Phase Notice</h3>
                 <p className="text-[#49739c] text-sm leading-relaxed">
-                  Medscan AI is currently in testing phase. To ensure security and cost control, we require users to provide their own OpenAI API key. 
+                  Medscan AI is currently in testing phase. To ensure security and cost control, we require users to provide their own Groq API key. 
                   Your API key is stored locally in your browser and never sent to our servers.
                 </p>
               </div>
@@ -78,14 +78,14 @@ const ApiKeyManager = ({ onApiKeySet, showModal, onClose }) => {
           {/* API Key Input */}
           <div className="space-y-4 mb-6">
             <label className="block text-[#0d141c] font-semibold text-sm">
-              OpenAI API Key
+              Groq API Key
             </label>
             <div className="relative">
               <input
                 type={isVisible ? "text" : "password"}
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="sk-..."
+                placeholder="gsk_..."
                 className="w-full px-4 py-3 border border-[#cedbe8] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#248bf3] focus:border-transparent pr-12"
               />
               <button
@@ -114,20 +114,20 @@ const ApiKeyManager = ({ onApiKeySet, showModal, onClose }) => {
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256">
               <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/>
             </svg>
-            {showGuide ? 'Hide Guide' : 'How to get OpenAI API Key?'}
+            {showGuide ? 'Hide Guide' : 'How to get Groq API Key?'}
           </button>
 
           {/* Guide */}
           {showGuide && (
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 mb-6 space-y-4">
-              <h3 className="font-semibold text-[#0d141c] mb-4">Step-by-step guide to get your OpenAI API Key:</h3>
+              <h3 className="font-semibold text-[#0d141c] mb-4">Step-by-step guide to get your Groq API Key:</h3>
               
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="w-8 h-8 bg-[#248bf3] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
                   <div>
-                    <p className="font-medium text-[#0d141c]">Visit OpenAI Platform</p>
-                    <p className="text-[#49739c] text-sm">Go to <a href="https://platform.openai.com" target="_blank" rel="noopener noreferrer" className="text-[#248bf3] hover:underline">platform.openai.com</a> and sign up or log in</p>
+                    <p className="font-medium text-[#0d141c]">Visit GroqCloud Console</p>
+                    <p className="text-[#49739c] text-sm">Go to <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-[#248bf3] hover:underline">console.groq.com</a> and sign up or log in</p>
                   </div>
                 </div>
                 
@@ -135,7 +135,7 @@ const ApiKeyManager = ({ onApiKeySet, showModal, onClose }) => {
                   <div className="w-8 h-8 bg-[#248bf3] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
                   <div>
                     <p className="font-medium text-[#0d141c]">Navigate to API Keys</p>
-                    <p className="text-[#49739c] text-sm">Click on your profile → "View API Keys" or go directly to API keys section</p>
+                    <p className="text-[#49739c] text-sm">Open the "API Keys" section in the sidebar or go directly to <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="text-[#248bf3] hover:underline">console.groq.com/keys</a></p>
                   </div>
                 </div>
                 
@@ -143,15 +143,15 @@ const ApiKeyManager = ({ onApiKeySet, showModal, onClose }) => {
                   <div className="w-8 h-8 bg-[#248bf3] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
                   <div>
                     <p className="font-medium text-[#0d141c]">Create New API Key</p>
-                    <p className="text-[#49739c] text-sm">Click "Create new secret key" and copy the generated key (starts with "sk-")</p>
+                    <p className="text-[#49739c] text-sm">Click "Create API Key" and copy the generated key (starts with "gsk_")</p>
                   </div>
                 </div>
                 
                 <div className="flex gap-4">
                   <div className="w-8 h-8 bg-[#248bf3] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
                   <div>
-                    <p className="font-medium text-[#0d141c]">Add Billing Information</p>
-                    <p className="text-[#49739c] text-sm">Ensure you have billing set up. OpenAI requires payment method for API access</p>
+                    <p className="font-medium text-[#0d141c]">Start Analyzing</p>
+                    <p className="text-[#49739c] text-sm">Groq offers a free tier, so no billing setup is needed to get started. Analysis uses the openai/gpt-oss-120b model</p>
                   </div>
                 </div>
               </div>
@@ -163,7 +163,7 @@ const ApiKeyManager = ({ onApiKeySet, showModal, onClose }) => {
                   </svg>
                   <div>
                     <p className="font-medium text-yellow-800 text-sm">Important:</p>
-                    <p className="text-yellow-700 text-sm">Keep your API key secure and never share it. Usage will be charged to your OpenAI account.</p>
+                    <p className="text-yellow-700 text-sm">Keep your API key secure and never share it. Usage will be charged to your Groq account.</p>
                   </div>
                 </div>
               </div>

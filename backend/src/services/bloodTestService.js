@@ -46,7 +46,8 @@ class BloodTestService {
       // Extract text using OCR
       const ocrResult = await ocrService.extractText(
         bloodTest.filePath,
-        bloodTest.fileType
+        bloodTest.fileType,
+        userInfo.groqApiKey
       );
 
       if (!ocrResult.success) {
@@ -73,7 +74,7 @@ class BloodTestService {
       const analysisResult = await analysisService.analyzeBloodTest(
         ocrResult.text,
         userInfo,
-        userInfo.openaiApiKey
+        userInfo.groqApiKey
       );
 
       if (!analysisResult.success) {

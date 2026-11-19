@@ -26,17 +26,17 @@ const uploadBloodTest = async (req, res) => {
       { title: defaultTitle, testDate, labName, doctorName }
     );
 
-    // Get OpenAI API key from request headers
-    const openaiApiKey = req.headers['x-openai-api-key'];
-    if (!openaiApiKey) {
-      return errorResponse(res, 'OpenAI API key is required', 400);
+    // Get Groq API key from request headers
+    const groqApiKey = req.headers['x-groq-api-key'];
+    if (!groqApiKey) {
+      return errorResponse(res, 'Groq API key is required', 400);
     }
 
     // Start processing in background
     bloodTestService.processBloodTest(bloodTest._id, {
       age: req.user.age,
       gender: req.user.gender,
-      openaiApiKey
+      groqApiKey
     }).catch(error => {
       console.error('Background processing error:', error);
     });
@@ -190,17 +190,17 @@ const reprocessBloodTest = async (req, res) => {
       return notFoundResponse(res, 'Blood test not found');
     }
 
-    // Get OpenAI API key from request headers
-    const openaiApiKey = req.headers['x-openai-api-key'];
-    if (!openaiApiKey) {
-      return errorResponse(res, 'OpenAI API key is required', 400);
+    // Get Groq API key from request headers
+    const groqApiKey = req.headers['x-groq-api-key'];
+    if (!groqApiKey) {
+      return errorResponse(res, 'Groq API key is required', 400);
     }
 
     // Start reprocessing
     const result = await bloodTestService.processBloodTest(id, {
       age: req.user.age,
       gender: req.user.gender,
-      openaiApiKey
+      groqApiKey
     });
 
     successResponse(res, result, 'Blood test reprocessed successfully');

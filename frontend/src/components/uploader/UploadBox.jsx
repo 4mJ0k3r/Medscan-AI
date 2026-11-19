@@ -86,7 +86,7 @@ const UploadBox = ({ onUploadSuccess, onUploadError, disabled = false }) => {
             disabled ? 'text-gray-400' : 'text-[#0d141c]'
           }`}>
             {disabled 
-              ? 'Please configure your OpenAI API key to upload and analyze reports'
+              ? 'Please configure your Groq API key to upload and analyze reports'
               : 'Supported formats: PDF, JPG, PNG. Maximum file size: 10MB'
             }
           </p>

@@ -51,8 +51,11 @@ const ReportDetails = () => {
         } catch (analysisError) {
           // If analysis returns 400, it means it's not ready yet
           if (analysisError.response?.status === 400) {
-            // Check report status to determine if we should poll
-            if (reportResponse.data.data?.status === 'processing' || reportResponse.data.data?.status === 'uploaded') {
+            const reportData = reportResponse.data.data;
+            if (reportData?.status === 'failed') {
+              setError(reportData.processingError || 'Processing failed. Please try again.');
+            } else if (reportData?.status === 'processing' || reportData?.status === 'uploaded') {
+              // Check report status to determine if we should poll
               setAnalysis({
                 status: 'processing',
                 message: 'Analysis in progress...'
@@ -126,9 +129,20 @@ const ReportDetails = () => {
         }
       } catch (error) {
         // If we get a 400 error, it means analysis is not ready yet
-        // Continue polling unless we've hit the max attempts
         if (error.response?.status === 400) {
-          // Continue polling
+          // Stop polling if processing failed, and surface the reason
+          try {
+            const reportResponse = await bloodTestAPI.getReport(id);
+            const reportData = reportResponse.data.data;
+            if (reportData?.status === 'failed') {
+              setIsPolling(false);
+              setReport(reportData);
+              setError(reportData.processingError || 'Processing failed. Please try again.');
+              return;
+            }
+          } catch (statusError) {
+            // Keep polling if the status check itself fails
+          }
         }
       }
       
@@ -137,6 +151,18 @@ const ReportDetails = () => {
     };
     
     poll();
+  };
+
+  const handleRetryProcessing = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await bloodTestAPI.reprocessReport(id);
+      window.location.reload();
+    } catch (err) {
+      setLoading(false);
+      setError(err.response?.data?.message || err.message || 'Failed to reprocess report');
+    }
   };
 
   const handleDownloadPDF = () => {
@@ -301,7 +327,7 @@ Thank you!`);
                     <ul className="text-yellow-700 text-sm space-y-2">
                       <li className="flex items-start gap-2">
                         <span className="text-yellow-500 mt-1">•</span>
-                        <span>Please configure your OpenAI API key in the header</span>
+                        <span>Please configure your Groq API key in the header</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-yellow-500 mt-1">•</span>
@@ -313,8 +339,14 @@ Thank you!`);
                 
                 <div className="flex gap-3 mt-6">
                   <button
-                    onClick={() => navigate('/dashboard')}
+                    onClick={handleRetryProcessing}
                     className="px-6 py-3 bg-[#248bf3] text-white rounded-xl hover:bg-[#0c7ff2] transition-colors font-medium"
+                  >
+                    Retry Processing
+                  </button>
+                  <button
+                    onClick={() => navigate('/dashboard')}
+                    className="px-6 py-3 bg-gray-100 text-[#0d141c] rounded-xl hover:bg-gray-200 transition-colors font-medium"
                   >
                     Back to Dashboard
                   </button>

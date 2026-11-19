@@ -1,20 +1,28 @@
 const { ChatOpenAI } = require('@langchain/openai');
 
-// Initialize OpenAI client
-const openai = new ChatOpenAI({
-  openAIApiKey: process.env.OPENAI_API_KEY,
+const GROQ_BASE_URL = 'https://api.groq.com/openai/v1';
+
+// Initialize Groq client (OpenAI-compatible API)
+const llm = new ChatOpenAI({
+  apiKey: process.env.GROQ_API_KEY,
   temperature: 0.7,
-  modelName: 'gpt-4o-mini', // Cost-effective model for blood test analysis
+  model: 'openai/gpt-oss-120b',
+  configuration: {
+    baseURL: GROQ_BASE_URL,
+  },
 });
 
-// Alternative model for more complex analysis
-const openaiAdvanced = new ChatOpenAI({
-  openAIApiKey: process.env.OPENAI_API_KEY,
+// Alternative client for more complex analysis
+const llmAdvanced = new ChatOpenAI({
+  apiKey: process.env.GROQ_API_KEY,
   temperature: 0.3,
-  modelName: 'gpt-4o',
+  model: 'openai/gpt-oss-120b',
+  configuration: {
+    baseURL: GROQ_BASE_URL,
+  },
 });
 
 module.exports = {
-  openai,
-  openaiAdvanced
-}; 
+  openai: llm,
+  openaiAdvanced: llmAdvanced
+};

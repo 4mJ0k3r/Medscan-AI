@@ -9,7 +9,7 @@ class AnalysisService {
     this.maxRetries = 3;
   }
 
-  // Analyze blood test results using OpenAI
+  // Analyze blood test results using Groq
   async analyzeBloodTest(extractedText, userInfo = {}, apiKey = null) {
     try {
       console.log('Starting blood test analysis...');
@@ -19,12 +19,12 @@ class AnalysisService {
       }
 
       if (!apiKey) {
-        throw new Error('OpenAI API key is required');
+        throw new Error('Groq API key is required');
       }
 
       const userPrompt = createBloodTestAnalysisPrompt(extractedText, userInfo);
       
-      const response = await this.callOpenAI(
+      const response = await this.callGroq(
         BLOOD_TEST_ANALYSIS_SYSTEM_PROMPT,
         userPrompt,
         apiKey
@@ -41,28 +41,32 @@ class AnalysisService {
       console.error('Analysis error:', error);
       return {
         success: false,
-        error: error.message,
+        error: error.response?.data?.error?.message || error.message,
         analysis: null
       };
     }
   }
 
-  // Call OpenAI API with retry logic
-  async callOpenAI(systemPrompt, userPrompt, apiKey, retries = 0) {
+  // Call Groq API with retry logic
+  async callGroq(systemPrompt, userPrompt, apiKey, retries = 0) {
     try {
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: 'gpt-4o-mini',
+      const response = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
+        model: 'openai/gpt-oss-120b',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 2000
+        // Reasoning tokens count against this budget, so keep it generous
+        max_completion_tokens: 8000,
+        reasoning_effort: 'low',
+        response_format: { type: 'json_object' }
       }, {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: 120000
       });
 
       const content = response.data.choices[0].message.content;
@@ -76,19 +80,19 @@ class AnalysisService {
       
       return parsedResponse;
     } catch (error) {
-      console.error(`OpenAI API error (attempt ${retries + 1}):`, error);
+      console.error(`Groq API error (attempt ${retries + 1}):`, error.response?.data || error.message);
       
       if (retries < this.maxRetries) {
         console.log(`Retrying... (${retries + 1}/${this.maxRetries})`);
         await this.delay(1000 * (retries + 1)); // Exponential backoff
-        return this.callOpenAI(systemPrompt, userPrompt, apiKey, retries + 1);
+        return this.callGroq(systemPrompt, userPrompt, apiKey, retries + 1);
       }
       
       throw error;
     }
   }
 
-  // Clean JSON response from OpenAI
+  // Clean JSON response from Groq
   cleanJsonResponse(response) {
     // Remove any markdown formatting
     let cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '');
